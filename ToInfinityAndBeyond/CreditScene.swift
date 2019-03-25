@@ -1,5 +1,5 @@
 //
-//  MenuScene.swift
+//  CreditScene.swift
 //  ToInfinityAndBeyond
 //
 //  Created by Jamie on 2019/3/25.
@@ -7,30 +7,39 @@
 //
 
 import Foundation
-import SpriteKit
+import GameplayKit
 
-class MenuScene: SKScene {
+class CreditScene: SKScene {
     
     override init(size: CGSize) {
         super.init(size: size)
     }
- 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     lazy var background:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "PlanetsInSpace")
+        var sprite = SKSpriteNode(imageNamed: "background_credit")
         sprite.size = frame.size
         sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
         sprite.position = CGPoint(x: 0.0, y: 0.0)
         sprite.zPosition = NodesZPosition.background.rawValue
         return sprite
     }()
-
+    
     lazy var playButton:SKSpriteNode = {
         var sprite = SKSpriteNode(imageNamed: "button_startGame")
         sprite.name = "PlayButton"
+        sprite.setScale(0.4)
+        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+        sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY + sprite.size.height)
+        sprite.zPosition = NodesZPosition.ui.rawValue
+        return sprite
+    }()
+    
+    lazy var backButton:SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: "button_back")
+        sprite.name = "BackButton"
         sprite.setScale(0.4)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
         sprite.position = CGPoint(x: self.frame.size.width/3, y: self.frame.midY + sprite.size.height)
@@ -38,42 +47,22 @@ class MenuScene: SKScene {
         return sprite
     }()
     
-    lazy var creditButton:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "button_credit")
-        sprite.name = "CreditButton"
-        sprite.setScale(0.4)
-        sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3, y: self.frame.midY  - sprite.size.height)
-        sprite.zPosition = NodesZPosition.ui.rawValue
-        return sprite
-    }()
-    
-    lazy var gameLogo:SKSpriteNode = {
-        var sprite = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: 450, height: 300))
-//        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY)
-        sprite.zPosition = NodesZPosition.ui.rawValue
-        return sprite
-    }()
-    
-    
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         addChild(background)
         addChild(playButton)
-        addChild(creditButton)
-        addChild(gameLogo)
+        addChild(backButton)
     }
-
+    
     func loadGameScene(){
         let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
         let nextScene = GameScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
     
-    func loadCreditScene(){
+    func loadMenuScene(){
         let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
-        let nextScene = CreditScene(size: self.frame.size)
+        let nextScene = MenuScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
     
@@ -84,9 +73,11 @@ class MenuScene: SKScene {
             if touchedNode.name == "PlayButton" {
                 loadGameScene()
             }
-            if touchedNode.name == "CreditButton" {
-                loadCreditScene()
+            if touchedNode.name == "BackButton" {
+                loadMenuScene()
             }
         }
     }
+    
+    
 }
