@@ -12,16 +12,17 @@ import SpriteKit
 public class Robot{
     
     var robotSprite:SKSpriteNode
-    var idleFrames: [SKTexture] = []
-    var runningFrames: [SKTexture] = []
-    var jumpFrames: [SKTexture] = []
-    var slideFrames: [SKTexture] = []
+    private var idleFrames: [SKTexture] = []
+    private var runningFrames: [SKTexture] = []
+    private var jumpFrames: [SKTexture] = []
+    private var slideFrames: [SKTexture] = []
     
     var x:CGFloat = 0.0
     var y:CGFloat = 0.0
     
     init() {
         robotSprite = SKSpriteNode()
+        robotSprite.name = "Robot"
         buildIdleAnimation()
         buildRunAnimation()
         buildSlideAnimation()
@@ -93,7 +94,7 @@ public class Robot{
     }
     
     func run(){
-        let run = SKAction.animate(with: runningFrames, timePerFrame:0.2, resize: true, restore: true)
+        let run = SKAction.animate(with: runningFrames, timePerFrame:0.15, resize: true, restore: true)
         robotSprite.run(SKAction.repeatForever(run),withKey:"Run")
     }
     
@@ -105,7 +106,6 @@ public class Robot{
     func slide(){
         let slide = SKAction.animate(with: slideFrames, timePerFrame:0.2, resize: true, restore: true)
         robotSprite.run(slide,withKey:"Slide")
-    }
-    
+    }    
     
 }

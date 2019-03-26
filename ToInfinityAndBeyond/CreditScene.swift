@@ -47,11 +47,18 @@ class CreditScene: SKScene {
         return sprite
     }()
     
+    func addBGM(){
+        let BGM = SKAudioNode(fileNamed: "BeBop25.mp3")
+        addChild(BGM)
+        BGM.run(SKAction.play())
+    }
+    
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         addChild(background)
         addChild(playButton)
         addChild(backButton)
+        addBGM()
     }
     
     func loadGameScene(){
@@ -72,12 +79,13 @@ class CreditScene: SKScene {
             let touchedNode = atPoint(location)
             if touchedNode.name == "PlayButton" {
                 loadGameScene()
+                run(buttonSound)
             }
             if touchedNode.name == "BackButton" {
                 loadMenuScene()
+                run(buttonSound)
             }
         }
     }
-    
     
 }

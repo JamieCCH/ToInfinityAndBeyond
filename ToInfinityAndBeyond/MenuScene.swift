@@ -9,6 +9,8 @@
 import Foundation
 import SpriteKit
 
+var buttonSound = SKAction.playSoundFileNamed("button.wav", waitForCompletion: false)
+
 class MenuScene: SKScene {
     
     override init(size: CGSize) {
@@ -49,13 +51,20 @@ class MenuScene: SKScene {
     }()
     
     lazy var gameLogo:SKSpriteNode = {
-        var sprite = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: 450, height: 300))
+//        var sprite = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: 450, height: 300))
 //        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+        var sprite = SKSpriteNode(imageNamed: "gameLogo")
+        sprite.setScale(0.8)
         sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
     
+    func addBGM(){
+        let BGM = SKAudioNode(fileNamed: "BeBop25.mp3")
+        addChild(BGM)
+        BGM.run(SKAction.play())
+    }
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
@@ -63,6 +72,7 @@ class MenuScene: SKScene {
         addChild(playButton)
         addChild(creditButton)
         addChild(gameLogo)
+        addBGM()
     }
 
     func loadGameScene(){
@@ -83,9 +93,11 @@ class MenuScene: SKScene {
             let touchedNode = atPoint(location)
             if touchedNode.name == "PlayButton" {
                 loadGameScene()
+                run(buttonSound)
             }
             if touchedNode.name == "CreditButton" {
                 loadCreditScene()
+                run(buttonSound)
             }
         }
     }

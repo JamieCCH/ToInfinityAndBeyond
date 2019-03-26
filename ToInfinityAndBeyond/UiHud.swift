@@ -11,15 +11,19 @@ import SpriteKit
 
 public class UiHud{
     
-    var coinColleted:Int = 0
+    var coinColleted:Int = 345
     
     lazy var background:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "background_city")
-        sprite.size =  UIScreen.main.bounds.size
-        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
-        sprite.position = CGPoint(x: 0.0, y: 0.0)
-        sprite.zPosition = NodesZPosition.background.rawValue
-        return sprite
+        for i in 0 ... 1 {
+            var sprite = SKSpriteNode(imageNamed: "background_city")
+            sprite.size =  UIScreen.main.bounds.size
+            sprite.name = "gameBg"
+            sprite.anchorPoint = CGPoint.zero
+            sprite.position = CGPoint(x: (sprite.frame.size.width * CGFloat(i)) - CGFloat(1 * i), y: 0.0)
+            sprite.zPosition = NodesZPosition.background.rawValue
+            return sprite
+        }
+        return self.background
     }()
     
     lazy var pauseButton:SKSpriteNode = {
@@ -52,6 +56,5 @@ public class UiHud{
         label.horizontalAlignmentMode = .left
         return label
     }()
-    
     
 }

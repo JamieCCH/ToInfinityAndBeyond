@@ -11,50 +11,81 @@ import SpriteKit
 
 class GameOverScene: SKScene {
     
-    //TODO: - Add label here to indicate game over
-    //TODO: - Add button to restart to menu
-    func addBackground(){
-        let background = SKSpriteNode(imageNamed: "Background")
-        background.size = frame.size
-        background.anchorPoint = CGPoint(x: 0.5, y: 0.0)
-        background.position = CGPoint(x: size.width / 2.0, y: 0.0)
-        background.zPosition = -1
-        addChild(background)
-    }
-    
-    func addButton(){
-        let restartButton = SKSpriteNode(imageNamed: "button_play_again")
-        restartButton.name = "RestartButton"
-        restartButton.setScale(0.5)
-        restartButton.position = CGPoint(x: self.frame.midX, y: self.frame.size.height/3)
-        addChild(restartButton)
-    }
-    
-    func addLabel(){
-        let label = SKLabelNode(text: "Game Over")
-        label.fontSize = 80
-        label.fontColor = UIColor.white
-        label.position = CGPoint(x: self.frame.midX, y: self.frame.size.height/2)
-        addChild(label)
-    }
-    
-    override init(size: CGSize) {
-        super.init(size: size)
-        addBackground()
-    }
+    override init(size: CGSize) {super.init(size: size)}
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) has not been implemented")}
+    
+    lazy var background:SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: "PlanetsInSpace2")
+        sprite.size = frame.size
+        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
+        sprite.position = CGPoint(x: 0.0, y: 0.0)
+        sprite.zPosition = NodesZPosition.background.rawValue
+        return sprite
+    }()
+    
+    lazy var title:SKLabelNode = {
+        var label = SKLabelNode(fontNamed: "Menlo-Bold")
+        label.text = "Game Over"
+        label.fontSize = 90
+        label.fontColor = UIColor.white
+        label.position = CGPoint(x: self.frame.midX, y: self.frame.maxY - label.frame.height * 1.7)
+        label.zPosition = NodesZPosition.ui.rawValue
+        label.horizontalAlignmentMode = .center
+        return label
+    }()
+    
+    lazy var coinIcon:SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: "Coin")
+        sprite.name = "CoinIcon"
+        sprite.setScale(0.25)
+//        sprite.anchorPoint = CGPoint(x: 1.0, y: 0.0)
+        sprite.position = CGPoint(x: self.frame.midX - sprite.frame.width, y: self.frame.midY)
+        sprite.zPosition = NodesZPosition.ui.rawValue
+        return sprite
+    }()
+    
+    lazy var result:SKLabelNode = {
+        var label = SKLabelNode(fontNamed: "Menlo-Bold")
+//        label.numberOfLines = 0
+        label.text = "\(UiHud().coinColleted)"
+        label.fontSize = 40
+        label.fontColor = UIColor.white
+        label.position = CGPoint(x: self.frame.midX, y: coinIcon.position.y - coinIcon.frame.height/3)
+        label.zPosition = NodesZPosition.ui.rawValue
+        label.horizontalAlignmentMode = .left
+        return label
+    }()
+    
+
+    lazy var restartButton:SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: "button_play_again")
+        sprite.name = "RestartButton"
+        sprite.setScale(0.4)
+        sprite.position = CGPoint(x: self.frame.midX, y: sprite.size.height * 1.3)
+        sprite.zPosition = NodesZPosition.ui.rawValue
+        return sprite
+    }()
+    
+    func addBGM(){
+        let BGM = SKAudioNode(fileNamed: "BeBop25.mp3")
+        addChild(BGM)
+        BGM.run(SKAction.play())
     }
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
-        addButton()
-        addLabel()
+        addChild(background)
+        addChild(restartButton)
+        addChild(title)
+        addChild(result)
+        addChild(coinIcon)
+        addBGM()
     }
     
     func loadMenuScene(){
-        let transition = SKTransition.doorsOpenHorizontal(withDuration: 2.0)
+        let transition = SKTransition.push(with: .down, duration: 2.0)
         let nextScene = MenuScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
@@ -65,6 +96,7 @@ class GameOverScene: SKScene {
             let touchedNode = atPoint(location)
             if touchedNode.name == "RestartButton" {
                 loadMenuScene()
+                run(buttonSound)
             }
         }
     }

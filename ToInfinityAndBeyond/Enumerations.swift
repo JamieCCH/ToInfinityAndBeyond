@@ -11,5 +11,5 @@ import GameplayKit
 
 
 enum NodesZPosition: CGFloat{
-    case background, actors, ui, overlay
+    case background, actors, ui, overlayBg, overlayItems
 }
