@@ -12,19 +12,10 @@ import SpriteKit
 public class UiHud{
     
     var coinColleted:Int = 345
-    
-    lazy var background:SKSpriteNode = {
-        for i in 0 ... 1 {
-            var sprite = SKSpriteNode(imageNamed: "background_city")
-            sprite.size =  UIScreen.main.bounds.size
-            sprite.name = "gameBg"
-            sprite.anchorPoint = CGPoint.zero
-            sprite.position = CGPoint(x: (sprite.frame.size.width * CGFloat(i)) - CGFloat(1 * i), y: 0.0)
-            sprite.zPosition = NodesZPosition.background.rawValue
-            return sprite
-        }
-        return self.background
-    }()
+    var isGameStart = false
+    var counter = 0
+    var counterTimer = Timer()
+    var counterStartVal = 3
     
     lazy var pauseButton:SKSpriteNode = {
         var sprite = SKSpriteNode(imageNamed: "button_pause")
@@ -57,4 +48,46 @@ public class UiHud{
         return label
     }()
     
+    lazy var countdownLabel:SKLabelNode = {
+        var label = SKLabelNode(fontNamed: "ArialRoundedMTBold")
+        label.text = "3"
+        label.fontSize = 80
+        label.fontColor = UIColor.white
+        label.position = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
+        label.zPosition = NodesZPosition.ui.rawValue
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        return label
+    }()
+    
+    func startCounter(){
+        counterTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerCountDown), userInfo: nil, repeats: true)
+    }
+    
+    @objc func timerCountDown(){
+        if !isGameStart{
+            if counter <= 1{
+                isGameStart = true
+            }
+            
+            counter -= 1
+            let sec = counter % 60
+            countdownLabel.text = "\(sec)"
+            
+            let scaleUp = SKAction.scale(to: 5.5, duration: 0.25)
+            let fadeIn = SKAction.fadeIn(withDuration: 0.25)
+            let scaleDown = SKAction.scale(to: 1.0, duration: 0.25)
+            let fadeOut = SKAction.fadeOut(withDuration: 0.25)
+            let inGroup = SKAction.group([fadeIn,scaleUp])
+            let outGroup = SKAction.group([scaleDown,fadeOut])
+            countdownLabel.run(SKAction.sequence([inGroup,outGroup]))
+            
+            if counter == 0{
+                countdownLabel.text = "GO"
+                let goAinm = SKAction.group([fadeIn, scaleUp])
+                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                countdownLabel.run(SKAction.sequence([goAinm,fadeOut]))
+            }
+        }
+    }
 }

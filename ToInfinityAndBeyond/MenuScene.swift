@@ -33,9 +33,9 @@ class MenuScene: SKScene {
     lazy var playButton:SKSpriteNode = {
         var sprite = SKSpriteNode(imageNamed: "button_startGame")
         sprite.name = "PlayButton"
-        sprite.setScale(0.4)
+        sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3, y: self.frame.midY + sprite.size.height)
+        sprite.position = CGPoint(x: self.frame.size.width/3 + sprite.frame.width/5, y: self.frame.midY + sprite.size.height)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
@@ -43,18 +43,18 @@ class MenuScene: SKScene {
     lazy var creditButton:SKSpriteNode = {
         var sprite = SKSpriteNode(imageNamed: "button_credit")
         sprite.name = "CreditButton"
-        sprite.setScale(0.4)
+        sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3, y: self.frame.midY  - sprite.size.height)
+        sprite.position = CGPoint(x: self.frame.size.width/3 + sprite.frame.width/5, y: self.frame.midY  - sprite.size.height)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
     
     lazy var gameLogo:SKSpriteNode = {
 //        var sprite = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: 450, height: 300))
-//        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
         var sprite = SKSpriteNode(imageNamed: "gameLogo")
-        sprite.setScale(0.8)
+        //sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+        sprite.setScale(0.7)
         sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite

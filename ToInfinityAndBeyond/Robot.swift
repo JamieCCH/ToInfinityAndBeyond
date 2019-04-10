@@ -16,19 +16,16 @@ public class Robot{
     private var runningFrames: [SKTexture] = []
     private var jumpFrames: [SKTexture] = []
     private var slideFrames: [SKTexture] = []
-    
-    var x:CGFloat = 0.0
-    var y:CGFloat = 0.0
+    private var fallFrames: [SKTexture] = []
     
     init() {
         robotSprite = SKSpriteNode()
         robotSprite.name = "Robot"
         buildIdleAnimation()
-        buildRunAnimation()
         buildSlideAnimation()
         buildJumpAnimation()
-        x = robotSprite.position.x
-        y = robotSprite.position.y
+        buildFallAnimation()
+        buildRunAnimation()
         self.setup()
     }
     
@@ -46,6 +43,17 @@ public class Robot{
             idleFrames.append(robotIdleAtlas.textureNamed(robotIdleName))
         }
         let firstFrameTexture = idleFrames[0]
+        robotSprite = SKSpriteNode(texture: firstFrameTexture)
+    }
+    
+    private func buildFallAnimation(){
+        let robotFallAtlas = SKTextureAtlas(named: "robotFall")
+        let numImages = robotFallAtlas.textureNames.count - 1
+        for i in 0...numImages {
+            let robotFallName = "dead_\(i)"
+            fallFrames.append(robotFallAtlas.textureNamed(robotFallName))
+        }
+        let firstFrameTexture = fallFrames[0]
         robotSprite = SKSpriteNode(texture: firstFrameTexture)
     }
     
@@ -85,7 +93,7 @@ public class Robot{
     
     func runSingleAnimation(Action action:String, Frame texture:[SKTexture], TimePerFrame interval:Double, CanResize resize:Bool, CanRestore restore: Bool){
         let action = SKAction.animate(with: texture, timePerFrame:interval, resize: true, restore: true)
-        robotSprite.run(action,withKey:"\(action)")
+        robotSprite.run(action, withKey:"\(action)")
     }
     
     func idle(){
@@ -93,19 +101,42 @@ public class Robot{
         robotSprite.run(SKAction.repeatForever(idle),withKey:"Idle")
     }
     
+    func waitAndRun(){
+        let wait = SKAction.wait(forDuration: 3.0)
+        let runAnim = SKAction.animate(with: runningFrames, timePerFrame:0.1, resize: true, restore: true)
+        let repeatRun = SKAction.repeatForever(runAnim)
+        robotSprite.run(SKAction.sequence([wait,  repeatRun]), withKey:"waitAndRun")
+    }
+    
     func run(){
-        let run = SKAction.animate(with: runningFrames, timePerFrame:0.15, resize: true, restore: true)
-        robotSprite.run(SKAction.repeatForever(run),withKey:"Run")
+        let runAnim = SKAction.animate(with: runningFrames, timePerFrame:0.07, resize: true, restore: true)
+        robotSprite.run(SKAction.repeatForever(runAnim), withKey:"Run")
     }
     
     func jump(){
-        let jump = SKAction.animate(with: jumpFrames, timePerFrame:0.2, resize: true, restore: true)
-        robotSprite.run(jump,withKey:"Jump")
+        let beginJump = SKAction.run{isGrounded = false}
+        let jump = SKAction.animate(with: jumpFrames, timePerFrame:0.05, resize: true, restore: true)
+        let up = SKAction.moveBy(x: 0, y: robotSprite.frame.height, duration: 0.02)
+        let jumpGroup = SKAction.group([beginJump,jump,up])
+        let down = SKAction.moveBy(x: 0, y: -robotSprite.frame.height, duration: 0.01)
+        let endJump = SKAction.run{isGrounded = true}
+        robotSprite.run(SKAction.sequence([jumpGroup,down,endJump]), withKey: "Jump")
     }
     
     func slide(){
-        let slide = SKAction.animate(with: slideFrames, timePerFrame:0.2, resize: true, restore: true)
-        robotSprite.run(slide,withKey:"Slide")
-    }    
+        let beginSlide = SKAction.run{isSlideing = true}
+        let down = SKAction.moveBy(x: 0, y: -20, duration: 0.06)
+        let slide = SKAction.animate(with: slideFrames, timePerFrame:0.06, resize: true, restore: true)
+        let slideGroup = SKAction.group([beginSlide,down,slide])
+        let moveBack = SKAction.moveBy(x: 0, y: 20, duration: 0.01)
+        let endSlide = SKAction.run{isSlideing = false}
+        robotSprite.run(SKAction.sequence([slideGroup,moveBack, endSlide]))
+        //robotSprite.run(slide,withKey:"Slide")
+    }
+    
+    func fall(){
+        let fall = SKAction.animate(with: fallFrames, timePerFrame:0.2, resize: true, restore: true)
+        robotSprite.run(fall,withKey:"Fall")
+    }
     
 }
