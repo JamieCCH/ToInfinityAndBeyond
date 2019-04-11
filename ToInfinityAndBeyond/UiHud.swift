@@ -9,9 +9,10 @@
 import Foundation
 import SpriteKit
 
+var coinColleted:Int = 0
+
 public class UiHud{
     
-    var coinColleted:Int = 345
     var isGameStart = false
     var counter = 0
     var counterTimer = Timer()
@@ -65,28 +66,24 @@ public class UiHud{
     }
     
     @objc func timerCountDown(){
+        
         if !isGameStart{
-            if counter <= 1{
-                isGameStart = true
-            }
-            
-            counter -= 1
-            let sec = counter % 60
-            countdownLabel.text = "\(sec)"
-            
-            let scaleUp = SKAction.scale(to: 5.5, duration: 0.25)
-            let fadeIn = SKAction.fadeIn(withDuration: 0.25)
-            let scaleDown = SKAction.scale(to: 1.0, duration: 0.25)
-            let fadeOut = SKAction.fadeOut(withDuration: 0.25)
+//            let wait = SKAction.wait(forDuration: 0.3)
+            let scaleUp = SKAction.scale(to: 5.5, duration: 0.2)
+            let fadeIn = SKAction.fadeIn(withDuration: 0.2)
+            let scaleDown = SKAction.scale(to: 1.0, duration: 0.2)
+            let fadeOut = SKAction.fadeOut(withDuration: 0.2)
             let inGroup = SKAction.group([fadeIn,scaleUp])
             let outGroup = SKAction.group([scaleDown,fadeOut])
-            countdownLabel.run(SKAction.sequence([inGroup,outGroup]))
+            countdownLabel.run(SKAction.sequence([inGroup,outGroup])){
+                self.counter -= 1
+                let sec = self.counter % 60
+                self.countdownLabel.text = "\(sec)"
+            }
             
-            if counter == 0{
+            if counter <= 0{
+                isGameStart = true
                 countdownLabel.text = "GO"
-                let goAinm = SKAction.group([fadeIn, scaleUp])
-                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-                countdownLabel.run(SKAction.sequence([goAinm,fadeOut]))
             }
         }
     }

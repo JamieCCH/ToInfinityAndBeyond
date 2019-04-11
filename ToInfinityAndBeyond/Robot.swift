@@ -9,6 +9,8 @@
 import Foundation
 import SpriteKit
 
+var isDown = false
+
 public class Robot{
     
     var robotSprite:SKSpriteNode
@@ -115,28 +117,34 @@ public class Robot{
     
     func jump(){
         let beginJump = SKAction.run{isGrounded = false}
-        let jump = SKAction.animate(with: jumpFrames, timePerFrame:0.05, resize: true, restore: true)
+        let jump = SKAction.animate(with: jumpFrames, timePerFrame:0.07, resize: true, restore: true)
         let up = SKAction.moveBy(x: 0, y: robotSprite.frame.height, duration: 0.02)
         let jumpGroup = SKAction.group([beginJump,jump,up])
         let down = SKAction.moveBy(x: 0, y: -robotSprite.frame.height, duration: 0.01)
         let endJump = SKAction.run{isGrounded = true}
-        robotSprite.run(SKAction.sequence([jumpGroup,down,endJump]), withKey: "Jump")
+//        robotSprite.run(SKAction.sequence([jumpGroup,down,endJump]), withKey: "Jump")
+        robotSprite.run(SKAction.sequence([beginJump,jump,endJump]), withKey: "Jump")
     }
     
     func slide(){
         let beginSlide = SKAction.run{isSlideing = true}
-        let down = SKAction.moveBy(x: 0, y: -20, duration: 0.06)
-        let slide = SKAction.animate(with: slideFrames, timePerFrame:0.06, resize: true, restore: true)
-        let slideGroup = SKAction.group([beginSlide,down,slide])
+        let down = SKAction.moveBy(x: 0, y: -20, duration: 0.1)
+        let slide = SKAction.animate(with: slideFrames, timePerFrame:0.1, resize: true, restore: true)
+        let shrink = SKAction.scale(by: 0.8, duration: 0.1)
+        let slideGroup = SKAction.group([beginSlide,down,slide,shrink])
         let moveBack = SKAction.moveBy(x: 0, y: 20, duration: 0.01)
+        let enlarge = SKAction.scale(by: 1.25, duration: 0.01)
         let endSlide = SKAction.run{isSlideing = false}
-        robotSprite.run(SKAction.sequence([slideGroup,moveBack, endSlide]))
-        //robotSprite.run(slide,withKey:"Slide")
+        robotSprite.run(SKAction.sequence([slideGroup, moveBack,enlarge, endSlide]))
+//        robotSprite.run(slideGroup,withKey:"Slide")
     }
     
     func fall(){
-        let fall = SKAction.animate(with: fallFrames, timePerFrame:0.2, resize: true, restore: true)
-        robotSprite.run(fall,withKey:"Fall")
+        robotSprite.removeAllActions()
+        let fall = SKAction.animate(with: fallFrames, timePerFrame:0.2, resize: true, restore: false)
+        let down = SKAction.run{isDown = true}
+//        robotSprite.run(SKAction.sequence([fall,down]))
+        robotSprite.run(fall)//{isDown = true}
+//        print("isDown  \(isDown)")
     }
-    
 }

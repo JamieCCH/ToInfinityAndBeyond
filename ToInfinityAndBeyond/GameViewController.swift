@@ -18,9 +18,10 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         let skView = view as! SKView
-        skView.showsFPS = true
         
-        //skView.showsPhysics = true
+//        skView.showsFPS = true
+//        skView.showsPhysics = true
+        
         
         splashScreen = SplashScreenScene(size: skView.bounds.size)
         splashScreen.scaleMode = .aspectFit
@@ -28,7 +29,7 @@ class GameViewController: UIViewController {
         let game = MenuScene(size: skView.bounds.size)
         game.scaleMode = .aspectFit
         
-        skView.presentScene(game)
+        skView.presentScene(splashScreen)
     }
     
     override var prefersStatusBarHidden: Bool {

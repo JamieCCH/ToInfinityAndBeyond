@@ -11,6 +11,8 @@ import SpriteKit
 
 class GameOverScene: SKScene {
     
+    var ui = UiHud()
+    
     override init(size: CGSize) {super.init(size: size)}
     
     required init?(coder aDecoder: NSCoder) {
@@ -49,7 +51,7 @@ class GameOverScene: SKScene {
     lazy var result:SKLabelNode = {
         var label = SKLabelNode(fontNamed: "Menlo-Bold")
 //        label.numberOfLines = 0
-        label.text = "\(UiHud().coinColleted)"
+        label.text = "\(coinColleted)"
         label.fontSize = 40
         label.fontColor = UIColor.white
         label.position = CGPoint(x: self.frame.midX, y: coinIcon.position.y - coinIcon.frame.height/3)

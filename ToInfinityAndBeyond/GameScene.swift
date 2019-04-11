@@ -9,11 +9,16 @@
 import SpriteKit
 import GameplayKit
 
+let wallCategory: UInt32 = 0x1 << 0
+let robotCategory: UInt32 = 0x1 << 1
+let coinCategory: UInt32 = 0x1 << 2
+let rockCategory: UInt32 = 0x1 << 3
+let floatsCategory: UInt32 = 0x1 << 4
 
-var isGrounded = true;
-var isSlideing = false;
+var isGrounded = true
+var isSlideing = false
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate{
     
     var ui = UiHud()
     var robot = Robot()
@@ -26,10 +31,16 @@ class GameScene: SKScene {
     var floats = SKSpriteNode()
     
     var maxNumCoin = 15
-    var maxNumRock = 3
-    var farestOutRight = 850
-    var numRock = 0
-    var numCoin = 0
+    var maxNumRock = 5
+    var maxNumFloat = 3
+    var coinSpeed = 15
+    var rockSpeed = 7
+    var floatsSpeed = 7
+    
+    var isGamePaused = false
+    var coinMove = false
+    var rockMove = false
+    var floatsMove = false
     
     private var moveAmtX: CGFloat = 0
     private var moveAmtY: CGFloat = 0
@@ -37,16 +48,22 @@ class GameScene: SKScene {
     private var initialPosition: CGPoint = CGPoint.zero
     private var initialTouch: CGPoint = CGPoint.zero
     
-    override init(size: CGSize) {super.init(size: size)}
+    override init(size: CGSize) {
+        super.init(size: size)
+        self.physicsWorld.contactDelegate = self
+        coinColleted = 0
+        ui.isGameStart = false
+        isDown = false
+    }
     required init?(coder aDecoder: NSCoder) {fatalError("init(coder:) has not been implemented")}
     
     func addBGM(){
         BGM = SKAudioNode(fileNamed: "AllGoodInTheWood.mp3")
-        addChild(BGM)
         let pause = SKAction.pause()
         let wait = SKAction.wait(forDuration: 1.8)
         let play = SKAction.play()
         BGM.run(SKAction.sequence([pause,wait,play]))
+        addChild(BGM)
     }
     
     func createBackground() {
@@ -63,40 +80,52 @@ class GameScene: SKScene {
     }
     
     func createCoin(){
-        
-        numCoin = Int.random(in: 3...maxNumCoin)
-        let lowestY = self.frame.height/4
+        let numCoin = Int.random(in: 3...maxNumCoin)
+        let lowestY = self.frame.height/4.5
         let randomY = CGFloat.random(in: lowestY...lowestY*3)
-        
-        for i in 1 ... numCoin{
+        for i in 0 ... numCoin{
             coin = SKSpriteNode(imageNamed: "Coin")
             coin.name = "coin"
             coin.setScale(0.2)
-            coin.anchorPoint = CGPoint(x: 0.0, y: 1.0)
+            //coin.anchorPoint = CGPoint(x: 0.0, y: 1.0)
             let gap = coin.frame.width;
-            coin.position = CGPoint(x: self.frame.width + CGFloat(i)*gap, y: randomY)
+            coin.position = CGPoint(x: self.frame.width + coin.frame.width/2 + CGFloat(i)*gap, y: randomY)
             coin.zPosition = NodesZPosition.actors.rawValue
             addChild(coin)
         }
     }
     
     func createRock(){
-        let randomGap = CGFloat.random(in: 350...CGFloat(farestOutRight))
-        numRock = Int.random(in: 1...maxNumRock)
-        for i in 1...numRock{
+        let randRockGap = CGFloat.random(in: 600...850)
+        let numRock = Int.random(in: 1...maxNumRock)
+        for i in 0...numRock{
             rock = SKSpriteNode(imageNamed: "TIAB_Rock1")
             rock.name = "rock"
             rock.setScale(0.4)
-            rock.anchorPoint = CGPoint(x: 0.0, y: 1.0)
-            rock.position = CGPoint(x: self.frame.width + CGFloat(i)*randomGap, y: rock.frame.height*1.5)
-            rock.zPosition = NodesZPosition.actors.rawValue
+            //rock.anchorPoint = CGPoint(x: 0.0, y: 1.0)
+            rock.position = CGPoint(x: self.frame.width + rock.frame.width/2 + CGFloat(i)*randRockGap, y: rock.frame.height)
+            rock.zPosition = NodesZPosition.objects.rawValue
             addChild(rock)
+        }
+    }
+    
+    func createFloats(){
+        let numFloat = Int.random(in: 1...maxNumFloat)
+        let randFloatGap = CGFloat.random(in: 550...850)
+        for i in 0 ... numFloat{
+            floats = SKSpriteNode(imageNamed: "TIAB_float")
+            floats.name = "floats"
+            floats.setScale(0.5)
+//            floats.anchorPoint = CGPoint(x: 0.0, y: 1.0)
+            floats.position = CGPoint(x: self.frame.width + CGFloat(i)*randFloatGap + floats.frame.width/2, y:self.frame.height/2.7)
+            floats.zPosition = NodesZPosition.objects.rawValue
+            addChild(floats)
         }
     }
     
     func moveBackround(){
         enumerateChildNodes(withName: "gameBg") { (gameBackground, run) in
-            let wait = SKAction.wait(forDuration: 3.0)
+            let wait = SKAction.wait(forDuration: 3.1)
             let moveLeft = SKAction.moveBy(x: -gameBackground.frame.width, y: 0, duration: 3.5)
             let moveReset = SKAction.moveBy(x: gameBackground.frame.width, y: 0, duration: 0)
             let moveLoop = SKAction.sequence([moveLeft, moveReset])
@@ -107,48 +136,123 @@ class GameScene: SKScene {
     }
     
     func moveCoin(){
-        let randomSec = CGFloat.random(in:3.5...5)
-        let edgePos = self.frame.width + CGFloat(numCoin) * coin.frame.width
-        enumerateChildNodes(withName: "coin") { (coin, move) in
-            let wait = SKAction.wait(forDuration: TimeInterval(randomSec))
-            let moveLeft = SKAction.moveBy(x: -edgePos, y: 0, duration: 3.5)
-            let coinMove = SKAction.sequence([wait,moveLeft])
-            coin.run(coinMove, withKey: "moveCoin")
+        self.enumerateChildNodes(withName: "coin") { (node, moveCoin) in
+            node.position.x -= CGFloat(self.coinSpeed)
+            if node.position.x <= -node.frame.width{
+                node.removeFromParent()
+            }
         }
     }
     
     func moveRock(){
-        let randomSec = CGFloat.random(in:3...4)
-        let edgePos = self.frame.width + CGFloat(farestOutRight*numRock)
-        enumerateChildNodes(withName: "rock") { (rock, run) in
-            let wait = SKAction.wait(forDuration: TimeInterval(randomSec))
-            let moveLeft = SKAction.moveBy(x: -edgePos, y: 0, duration: 4.5)
-            let rockAnim = SKAction.sequence([wait,moveLeft])
-            rock.run(rockAnim,withKey:"moveRock")
+        self.enumerateChildNodes(withName: "rock") { (node, moveRock) in
+            node.position.x -= CGFloat(self.rockSpeed)
+            if node.position.x <= -node.frame.width{
+                node.removeFromParent()
+            }
         }
+    }
+    
+    func moveFloat(){
+        self.enumerateChildNodes(withName: "floats") { (node, moveFloats) in
+            node.position.x -= CGFloat(self.floatsSpeed)
+            if node.position.x <= -node.frame.width{
+                node.removeFromParent()
+            }
+        }
+    }
+    
+    func setCoinPhysics(){
+        enumerateChildNodes(withName: "coin") { (node, physics) in
+//            node.physicsBody = SKPhysicsBody(texture: (self.coin.texture)!, size: (self.coin.size))
+            node.physicsBody = SKPhysicsBody(circleOfRadius: self.coin.frame.width/2)
+//            node.physicsBody = SKPhysicsBody(rectangleOf: self.coin.size)
+            node.physicsBody?.affectedByGravity = false
+            node.physicsBody?.allowsRotation = false
+            node.physicsBody?.categoryBitMask = coinCategory
+            node.physicsBody?.contactTestBitMask = robotCategory | floatsCategory  | rockCategory
+            node.physicsBody?.collisionBitMask = robotCategory
+            node.physicsBody?.isDynamic = true
+            node.physicsBody?.usesPreciseCollisionDetection = true
+        }
+    }
+    
+    func setRockPhysics(){
+        enumerateChildNodes(withName: "rock") { (node, physics) in
+            node.physicsBody = SKPhysicsBody(texture: (self.rock.texture)!, size: (self.rock.size))
+            node.physicsBody?.affectedByGravity = false
+            node.physicsBody?.allowsRotation = false
+            node.physicsBody?.categoryBitMask = rockCategory
+            node.physicsBody?.contactTestBitMask = robotCategory | coinCategory
+            node.physicsBody?.collisionBitMask = 0
+            node.physicsBody?.isDynamic = true
+        }
+    }
+    
+    func setFloatsPhysics(){
+        enumerateChildNodes(withName: "floats") { (node, physics) in
+//            node.physicsBody = SKPhysicsBody(texture: (self.floats.texture)!, size: (self.floats.size))
+            node.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.floats.frame.width*0.9, height: self.floats.frame.height*0.9),center: CGPoint(x:0.0,y:5.0))
+            node.physicsBody?.affectedByGravity = false
+            node.physicsBody?.mass = 0
+            node.physicsBody?.allowsRotation = false
+            node.physicsBody?.linearDamping = 0
+            node.physicsBody?.categoryBitMask = floatsCategory
+            node.physicsBody?.contactTestBitMask = robotCategory | coinCategory
+            node.physicsBody?.collisionBitMask =  0
+            node.physicsBody?.isDynamic = true
+        }
+    }
+    
+    func setPhysics(){
+        
+        let wallRect = CGRect(x: 0, y: 25, width: self.frame.size.width, height: self.frame.size.height)
+        let borderBody = SKPhysicsBody(edgeLoopFrom: wallRect)
+        self.physicsBody =  borderBody
+        
+        self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
+        
+        self.physicsBody?.categoryBitMask = wallCategory
+        self.physicsBody?.contactTestBitMask = robotCategory
+        self.physicsBody?.collisionBitMask = robotCategory
+        
+        robot.robotSprite.physicsBody = SKPhysicsBody(texture: (robot.robotSprite.texture)!, size: (robot.robotSprite.size))
+        robot.robotSprite.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.robot.robotSprite.frame.width*0.8, height: self.robot.robotSprite.frame.height*0.9))
+        robot.robotSprite.physicsBody?.affectedByGravity = true
+        robot.robotSprite.physicsBody?.mass = 1.5
+        robot.robotSprite.physicsBody?.allowsRotation = false
+        robot.robotSprite.physicsBody?.categoryBitMask = robotCategory
+        robot.robotSprite.physicsBody?.contactTestBitMask = wallCategory | coinCategory | rockCategory | floatsCategory
+        robot.robotSprite.physicsBody?.collisionBitMask =  wallCategory | coinCategory | rockCategory | floatsCategory
+        robot.robotSprite.physicsBody?.isDynamic = true
+//        robot.robotSprite.physicsBody?.usesPreciseCollisionDetection = true
+        
+        setCoinPhysics()
+        setRockPhysics()
+        setFloatsPhysics()
     }
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
+        ui.counter = ui.counterStartVal
+        ui.startCounter()
+        
         addChild(ui.countdownLabel)
         addChild(ui.pauseButton)
         addChild(ui.coinIcon)
         addChild(ui.coinLabel)
         addChild(robot.robotSprite)
-        robot.idle()
         createBackground()
         moveBackround()
-        
-        ui.counter = ui.counterStartVal
-        ui.startCounter()
+        robot.idle()
         robot.waitAndRun()
         
-        addBGM()
-        
         createRock()
-        moveRock()
         createCoin()
-        moveCoin()
+        createFloats()
+        setPhysics()
+        
+        addBGM()
     }
     
     func loadGameOverScene(){
@@ -163,27 +267,25 @@ class GameScene: SKScene {
         view?.presentScene(nextScene, transition: transition)
     }
     
+    func gameOver(){
+        //add play game over music + wait
+        let wait = SKAction.wait(forDuration: 2.0)
+        let goGameOver = SKAction.run(){self.loadGameOverScene()}
+        self.run(SKAction.sequence([wait,goGameOver]))
+    }
+    
     func puaseGame(){
+        isGamePaused = true
+        BGM.run(SKAction.pause())
         enumerateChildNodes(withName: "gameBg") { (gameBackground, pause) in
-            gameBackground.isPaused = true;
-        }
-        enumerateChildNodes(withName: "coin") { (coin, pause) in
-            coin.isPaused = true;
-        }
-        enumerateChildNodes(withName: "rock") { (rock, pause) in
-            rock.isPaused = true;
+            gameBackground.isPaused = true
         }
     }
     
     func resumeGame(){
+        isGamePaused = false
         enumerateChildNodes(withName: "gameBg") { (gameBackground, resume) in
             gameBackground.isPaused = false;
-        }
-        enumerateChildNodes(withName: "coin") { (coin, resume) in
-            coin.isPaused = false;
-        }
-        enumerateChildNodes(withName: "rock") { (rock, resume) in
-            rock.isPaused = false;
         }
     }
     
@@ -192,7 +294,6 @@ class GameScene: SKScene {
         addChild(pauseView.title)
         addChild(pauseView.backButton)
         addChild(pauseView.restartButton)
-        BGM.run(SKAction.pause())
         robot.idle()
         puaseGame()
     }
@@ -213,7 +314,7 @@ class GameScene: SKScene {
                     loadGameOverScene()
                     print("touch robot")
                 }
-                if touchedNode.name == "gameBg"{
+                if !isGamePaused{
                     if let touch = touches.first{
                         initialTouch = touch.location(in: self.scene!.view)
                         moveAmtY = 0
@@ -255,13 +356,10 @@ class GameScene: SKScene {
         
         if ui.isGameStart{
             
-            for t in touches {
-                let location = t.location(in: self)
-                let touchedNode = atPoint(location)
-                
-                if touchedNode.name == "gameBg"{
+                if !isGamePaused && isGrounded{
                     if moveAmtY == 0 && moveAmtY == 0 && isGrounded{
                         robot.jump()
+                        robot.robotSprite.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 1100))
                     }
                     var direction = ""
                     if abs(moveAmtX) > minimum_detect_distance {
@@ -283,39 +381,113 @@ class GameScene: SKScene {
                         }
                     }
                     print("direction: \(direction)")
-                    
+                    print("slide \(isSlideing)")
+                    print("onGround \(isGrounded)")
                     if direction == "down" && isGrounded && !isSlideing{
                         robot.slide()
                     }
                 }
-            }
         }
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        if ui.isGameStart {
-            enumerateChildNodes(withName: "coin") { (coin, delete) in
-                if coin.position.x<=0{
-                    coin.removeFromParent()
-                }
-            }
-            enumerateChildNodes(withName: "rock") { (rock, delete) in
-                if rock.position.x<=0{
-                    rock.removeFromParent()
-                    print("remove Rock")
-                }
-            }
+    func getCoin(){
+        coinColleted += 1
+        ui.coinLabel.text = "\(coinColleted)"
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact){
+        
+        let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+        switch contactMask{
+        case robotCategory | wallCategory:
+//            print("--hit ground--")
+            isGrounded = true
+            break
             
+        case robotCategory | coinCategory:
+            let coinNode = contact.bodyA.categoryBitMask == coinCategory ? contact.bodyA.node : contact.bodyB.node
+            if coinNode == nil {return}
+            //play coin sound
+            coinNode?.removeFromParent()
+            if contact.bodyA.node?.parent == nil || contact.bodyB.node?.parent == nil {
+//                print("--hit coin--")
+                getCoin()
+            }
+            break
+            
+        case robotCategory | rockCategory:
+//            print("--hit rock--")
+            robot.fall()
+            puaseGame()
+            gameOver()
+            break
+            
+        case robotCategory | floatsCategory:
+            let robotX = robot.robotSprite.position.x
+            let robotY = robot.robotSprite.position.y
+            let floatsX = floats.position.x - floats.frame.width/2
+            let floatsY = floats.position.y + floats.frame.height/2
+            if robotX < floatsX  && robotY < floatsY {
+                robot.fall()
+                puaseGame()
+                gameOver()
+            }
+            break
+            
+        case coinCategory | floatsCategory:
+            let coinNode = contact.bodyA.categoryBitMask == coinCategory ? contact.bodyA.node : contact.bodyB.node
+            coinNode?.removeFromParent()
+            print("--hit-- floats + coins")
+            break
+            
+        case coinCategory | rockCategory:
+            let coinNode = contact.bodyA.categoryBitMask == coinCategory ? contact.bodyA.node : contact.bodyB.node
+            coinNode?.removeFromParent()
+            break
+            
+        default:
+             print("no collision")
+            break
+        }
+    }
+
+    override func update(_ currentTime: TimeInterval) {
+        
+        if ui.isGameStart {
+            
+            if !isGamePaused {
+                let coinRandomSec = CGFloat.random(in: 2...3.5)
+                let coinWait = SKAction.wait(forDuration: TimeInterval(coinRandomSec))
+                self.run(coinWait){self.coinMove=true}
+                if(coinMove){moveCoin()}
+                
+                let rockRandomSec = CGFloat.random(in: 4...5.5)
+                let rockWait = SKAction.wait(forDuration: TimeInterval(rockRandomSec))
+                self.run(rockWait){self.rockMove=true}
+                if(rockMove){moveRock()}
+                
+                let floatsRandomSec = CGFloat.random(in: 6.5...7.5)
+                let floatsWait = SKAction.wait(forDuration: TimeInterval(floatsRandomSec))
+                self.run(floatsWait){self.floatsMove=true}
+                if(floatsMove){moveFloat()}
+            }
+        
             if self.childNode(withName: "coin") == nil{
                 print("no coins")
                 createCoin()
-                moveCoin()
+                setCoinPhysics()
             }
             
             if self.childNode(withName: "rock") == nil{
                 print("no rock")
                 createRock()
-                moveRock()
+                setRockPhysics()
+            }
+            
+            if self.childNode(withName: "floats") == nil{
+                print("no floats")
+                createFloats()
+                setFloatsPhysics()
             }
         }
     }

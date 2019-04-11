@@ -76,7 +76,7 @@ class MenuScene: SKScene {
     }
 
     func loadGameScene(){
-        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
+        let transition = SKTransition.fade(with: UIColor.white, duration: 1.2)
         let nextScene = GameScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
