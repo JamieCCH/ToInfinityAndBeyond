@@ -22,7 +22,7 @@ class MenuScene: SKScene {
     }
     
     lazy var background:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "PlanetsInSpace")
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_SpaceBgUp")
         sprite.size = frame.size
         sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
         sprite.position = CGPoint(x: 0.0, y: 0.0)
@@ -35,7 +35,7 @@ class MenuScene: SKScene {
         sprite.name = "PlayButton"
         sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3 + sprite.frame.width/5, y: self.frame.midY + sprite.size.height)
+        sprite.position = CGPoint(x: self.frame.midX - sprite.frame.width/2 , y: self.frame.midY + sprite.size.height/1.5)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
@@ -45,17 +45,16 @@ class MenuScene: SKScene {
         sprite.name = "CreditButton"
         sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3 + sprite.frame.width/5, y: self.frame.midY  - sprite.size.height)
+        sprite.position = CGPoint(x: self.frame.midX - sprite.frame.width/2, y: self.frame.midY - sprite.size.height/1.5)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
     
     lazy var gameLogo:SKSpriteNode = {
-//        var sprite = SKSpriteNode(color: UIColor.yellow, size: CGSize(width: 450, height: 300))
-        var sprite = SKSpriteNode(imageNamed: "gameLogo")
-        //sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
-        sprite.setScale(0.7)
-        sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY)
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_logo")
+        sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+        sprite.setScale(0.35)
+        sprite.position = CGPoint(x: self.frame.midX - 50, y: self.frame.midY)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
@@ -76,13 +75,14 @@ class MenuScene: SKScene {
     }
 
     func loadGameScene(){
-        let transition = SKTransition.fade(with: UIColor.white, duration: 1.2)
+        let transition = SKTransition.fade(with: UIColor.white, duration: 1.6)
         let nextScene = GameScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
     
     func loadCreditScene(){
-        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
+        let transition = SKTransition.push(with: .left, duration: 2.0)
+//        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
         let nextScene = CreditScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }

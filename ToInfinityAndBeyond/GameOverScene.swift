@@ -19,7 +19,7 @@ class GameOverScene: SKScene {
         fatalError("init(coder:) has not been implemented")}
     
     lazy var background:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "PlanetsInSpace2")
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_SpaceBgDown")
         sprite.size = frame.size
         sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
         sprite.position = CGPoint(x: 0.0, y: 0.0)

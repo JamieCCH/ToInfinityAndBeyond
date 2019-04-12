@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D2F4F7E225FD12E0084CB2A /* Coin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F7D225FD12E0084CB2A /* Coin.wav */; };
+		7D2F4F80225FD1380084CB2A /* Jump01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F7F225FD1380084CB2A /* Jump01.mp3 */; };
+		7D2F4F82225FD1420084CB2A /* phone-bump-3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F81225FD1420084CB2A /* phone-bump-3.wav */; };
+		7D2F4F84225FD9120084CB2A /* game-over.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F83225FD9120084CB2A /* game-over.wav */; };
+		7D2F4F8C225FE1350084CB2A /* Sliding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F8B225FE1350084CB2A /* Sliding.mp3 */; };
+		7D2F4F8E225FF86D0084CB2A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D2F4F8D225FF86D0084CB2A /* Assets.xcassets */; };
 		7D70B0CA2248BE6D002F7A86 /* SplashScreenScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D70B0C92248BE6D002F7A86 /* SplashScreenScene.swift */; };
 		7D70B0CE2248C24F002F7A86 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D70B0CD2248C24F002F7A86 /* MenuScene.swift */; };
 		7D70B0D02248C31E002F7A86 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D70B0CF2248C31E002F7A86 /* GameOverScene.swift */; };
@@ -26,12 +32,17 @@
 		7D94842F2248913600550FAE /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D94842E2248913600550FAE /* GameScene.swift */; };
 		7D9484312248913600550FAE /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9484302248913600550FAE /* GameViewController.swift */; };
 		7D9484342248913600550FAE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D9484322248913600550FAE /* Main.storyboard */; };
-		7D9484362248913700550FAE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D9484352248913700550FAE /* Assets.xcassets */; };
 		7D9484392248913700550FAE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D9484372248913700550FAE /* LaunchScreen.storyboard */; };
 		7DD18F91225D5A660068711C /* robotFall.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 7DD18F90225D5A660068711C /* robotFall.atlas */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7D2F4F7D225FD12E0084CB2A /* Coin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Coin.wav; sourceTree = "<group>"; };
+		7D2F4F7F225FD1380084CB2A /* Jump01.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Jump01.mp3; sourceTree = "<group>"; };
+		7D2F4F81225FD1420084CB2A /* phone-bump-3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "phone-bump-3.wav"; sourceTree = "<group>"; };
+		7D2F4F83225FD9120084CB2A /* game-over.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "game-over.wav"; sourceTree = "<group>"; };
+		7D2F4F8B225FE1350084CB2A /* Sliding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Sliding.mp3; sourceTree = "<group>"; };
+		7D2F4F8D225FF86D0084CB2A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D70B0C92248BE6D002F7A86 /* SplashScreenScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreenScene.swift; sourceTree = "<group>"; };
 		7D70B0CD2248C24F002F7A86 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
 		7D70B0CF2248C31E002F7A86 /* GameOverScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
@@ -52,7 +63,6 @@
 		7D94842E2248913600550FAE /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		7D9484302248913600550FAE /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		7D9484332248913600550FAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		7D9484352248913700550FAE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7D9484382248913700550FAE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D94843A2248913700550FAE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7DD18F90225D5A660068711C /* robotFall.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = robotFall.atlas; sourceTree = "<group>"; };
@@ -72,9 +82,14 @@
 		7D70B0D322495D36002F7A86 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				7D2F4F8B225FE1350084CB2A /* Sliding.mp3 */,
+				7D2F4F7D225FD12E0084CB2A /* Coin.wav */,
 				7D70B0F72249F0E2002F7A86 /* AllGoodInTheWood.mp3 */,
 				7D70B0F32249F0C9002F7A86 /* BeBop25.mp3 */,
+				7D2F4F7F225FD1380084CB2A /* Jump01.mp3 */,
+				7D2F4F81225FD1420084CB2A /* phone-bump-3.wav */,
 				7D70B0F52249F0D2002F7A86 /* button.wav */,
+				7D2F4F83225FD9120084CB2A /* game-over.wav */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
@@ -112,6 +127,7 @@
 			children = (
 				7D70B0D422495D3D002F7A86 /* Atlas */,
 				7D70B0D322495D36002F7A86 /* Audio */,
+				7D2F4F8D225FF86D0084CB2A /* Assets.xcassets */,
 				7D9484282248913600550FAE /* AppDelegate.swift */,
 				7D9484302248913600550FAE /* GameViewController.swift */,
 				7D70B0E3224974D3002F7A86 /* Enumerations.swift */,
@@ -124,7 +140,6 @@
 				7D70B0E7224977A8002F7A86 /* UiHud.swift */,
 				7D70B0E522497649002F7A86 /* Robot.swift */,
 				7D9484322248913600550FAE /* Main.storyboard */,
-				7D9484352248913700550FAE /* Assets.xcassets */,
 				7D9484372248913700550FAE /* LaunchScreen.storyboard */,
 				7D94843A2248913700550FAE /* Info.plist */,
 			);
@@ -190,16 +205,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D70B0F42249F0C9002F7A86 /* BeBop25.mp3 in Resources */,
+				7D2F4F7E225FD12E0084CB2A /* Coin.wav in Resources */,
 				7D70B0F82249F0E2002F7A86 /* AllGoodInTheWood.mp3 in Resources */,
+				7D2F4F8C225FE1350084CB2A /* Sliding.mp3 in Resources */,
 				7D70B0F022499F26002F7A86 /* robotRun.atlas in Resources */,
+				7D2F4F80225FD1380084CB2A /* Jump01.mp3 in Resources */,
 				7D70B0EF22499F26002F7A86 /* robotSlide.atlas in Resources */,
 				7D9484342248913600550FAE /* Main.storyboard in Resources */,
-				7D9484362248913700550FAE /* Assets.xcassets in Resources */,
+				7D2F4F84225FD9120084CB2A /* game-over.wav in Resources */,
 				7D70B0EA22499EE6002F7A86 /* robotIdle.atlas in Resources */,
 				7DD18F91225D5A660068711C /* robotFall.atlas in Resources */,
 				7D70B0EE22499F26002F7A86 /* robotJump.atlas in Resources */,
 				7D9484392248913700550FAE /* LaunchScreen.storyboard in Resources */,
 				7D70B0F62249F0D3002F7A86 /* button.wav in Resources */,
+				7D2F4F8E225FF86D0084CB2A /* Assets.xcassets in Resources */,
+				7D2F4F82225FD1420084CB2A /* phone-bump-3.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

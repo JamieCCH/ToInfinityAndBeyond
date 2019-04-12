@@ -19,7 +19,7 @@ class CreditScene: SKScene {
     }
     
     lazy var background:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "background_credit")
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_Credits")
         sprite.size = frame.size
         sprite.anchorPoint = CGPoint(x: 0.0, y: 0.0)
         sprite.position = CGPoint(x: 0.0, y: 0.0)
@@ -28,21 +28,21 @@ class CreditScene: SKScene {
     }()
     
     lazy var playButton:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "button_startGame")
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_button_Start")
         sprite.name = "PlayButton"
-        sprite.setScale(0.4)
+        sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 0.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3 * 2, y: self.frame.midY + sprite.size.height)
+        sprite.position = CGPoint(x: self.frame.size.width - sprite.frame.size.width*2, y: sprite.size.height*2)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
     
     lazy var backButton:SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "button_back")
+        var sprite = SKSpriteNode(imageNamed: "i4_TIAB_button_Back")
         sprite.name = "BackButton"
-        sprite.setScale(0.4)
+        sprite.setScale(0.3)
         sprite.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        sprite.position = CGPoint(x: self.frame.size.width/3, y: self.frame.midY + sprite.size.height)
+        sprite.position = CGPoint(x: sprite.frame.size.width*2, y: sprite.size.height*2)
         sprite.zPosition = NodesZPosition.ui.rawValue
         return sprite
     }()
@@ -62,13 +62,14 @@ class CreditScene: SKScene {
     }
     
     func loadGameScene(){
-        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
+        let transition = SKTransition.fade(with: UIColor.white, duration: 1.6)
         let nextScene = GameScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }
     
     func loadMenuScene(){
-        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
+//        let transition = SKTransition.fade(with: UIColor.white, duration: 2.0)
+        let transition = SKTransition.push(with: .right, duration: 2.0)
         let nextScene = MenuScene(size: self.frame.size)
         view?.presentScene(nextScene, transition: transition)
     }

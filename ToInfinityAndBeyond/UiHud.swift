@@ -69,12 +69,13 @@ public class UiHud{
         
         if !isGameStart{
 //            let wait = SKAction.wait(forDuration: 0.3)
-            let scaleUp = SKAction.scale(to: 5.5, duration: 0.2)
-            let fadeIn = SKAction.fadeIn(withDuration: 0.2)
-            let scaleDown = SKAction.scale(to: 1.0, duration: 0.2)
-            let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+            let scaleUp = SKAction.scale(to: 5.5, duration: 0.22)
+            let fadeIn = SKAction.fadeIn(withDuration: 0.22)
+            let scaleDown = SKAction.scale(to: 1.0, duration: 0.22)
+            let fadeOut = SKAction.fadeOut(withDuration: 0.22)
             let inGroup = SKAction.group([fadeIn,scaleUp])
             let outGroup = SKAction.group([scaleDown,fadeOut])
+//            countdownLabel.run(SKAction.repeat(SKAction.sequence([inGroup,outGroup]), count: 3)){
             countdownLabel.run(SKAction.sequence([inGroup,outGroup])){
                 self.counter -= 1
                 let sec = self.counter % 60

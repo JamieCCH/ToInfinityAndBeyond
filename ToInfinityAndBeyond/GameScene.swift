@@ -26,6 +26,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     
     var gameBackground = SKSpriteNode()
     var BGM = SKAudioNode()
+    var jumpSound = SKAction()
+    var coinSound = SKAction()
+    var collisionSound = SKAction()
+    var gameOverSound = SKAction()
+    var slideSound = SKAction()
+    
     var coin = SKSpriteNode()
     var rock = SKSpriteNode()
     var floats = SKSpriteNode()
@@ -54,6 +60,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         coinColleted = 0
         ui.isGameStart = false
         isDown = false
+        isSlideing = false
     }
     required init?(coder aDecoder: NSCoder) {fatalError("init(coder:) has not been implemented")}
     
@@ -126,7 +133,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     func moveBackround(){
         enumerateChildNodes(withName: "gameBg") { (gameBackground, run) in
             let wait = SKAction.wait(forDuration: 3.1)
-            let moveLeft = SKAction.moveBy(x: -gameBackground.frame.width, y: 0, duration: 3.5)
+            let moveLeft = SKAction.moveBy(x: -gameBackground.frame.width, y: 0, duration: 2.5)
             let moveReset = SKAction.moveBy(x: gameBackground.frame.width, y: 0, duration: 0)
             let moveLoop = SKAction.sequence([moveLeft, moveReset])
             let moveForever = SKAction.repeatForever(moveLoop)
@@ -232,6 +239,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         setFloatsPhysics()
     }
     
+    func addSounds(){
+        jumpSound = SKAction.playSoundFileNamed("Jump01.mp3", waitForCompletion: false)
+        coinSound = SKAction.playSoundFileNamed("Coin.wav", waitForCompletion: false)
+        collisionSound = SKAction.playSoundFileNamed("phone-bump-3.wav", waitForCompletion: false)
+        gameOverSound = SKAction.playSoundFileNamed("game-over.wav", waitForCompletion: false)
+        slideSound = SKAction.playSoundFileNamed("Sliding.mp3", waitForCompletion: false)
+    }
+    
     override func didMove(to view: SKView) {
         super.didMove(to: view)
         ui.counter = ui.counterStartVal
@@ -253,6 +268,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         setPhysics()
         
         addBGM()
+        addSounds()
     }
     
     func loadGameOverScene(){
@@ -311,8 +327,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                     run(buttonSound)
                 }
                 if touchedNode == robot.robotSprite{
-                    loadGameOverScene()
-                    print("touch robot")
+//                    loadGameOverScene()
+//                    print("touch robot")
                 }
                 if !isGamePaused{
                     if let touch = touches.first{
@@ -320,7 +336,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                         moveAmtY = 0
                         moveAmtX = 0
                         initialPosition = touch.location(in: view)
-                        print("initialPosition:  \(initialPosition)")
+//                        print("initialPosition:  \(initialPosition)")
                     }
                 }
                 
@@ -355,11 +371,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         if ui.isGameStart{
-            
                 if !isGamePaused && isGrounded{
-                    if moveAmtY == 0 && moveAmtY == 0 && isGrounded{
+                    if moveAmtY == 0 && moveAmtY == 0{
                         robot.jump()
                         robot.robotSprite.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 1100))
+                        run(jumpSound)
                     }
                     var direction = ""
                     if abs(moveAmtX) > minimum_detect_distance {
@@ -381,9 +397,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                         }
                     }
                     print("direction: \(direction)")
-                    print("slide \(isSlideing)")
-                    print("onGround \(isGrounded)")
+                    print("slide      \(isSlideing)")
+                    print("onGround   \(isGrounded)")
                     if direction == "down" && isGrounded && !isSlideing{
+                        run(slideSound)
                         robot.slide()
                     }
                 }
@@ -407,7 +424,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         case robotCategory | coinCategory:
             let coinNode = contact.bodyA.categoryBitMask == coinCategory ? contact.bodyA.node : contact.bodyB.node
             if coinNode == nil {return}
-            //play coin sound
+            run(coinSound)
             coinNode?.removeFromParent()
             if contact.bodyA.node?.parent == nil || contact.bodyB.node?.parent == nil {
 //                print("--hit coin--")
@@ -417,6 +434,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             
         case robotCategory | rockCategory:
 //            print("--hit rock--")
+            run(collisionSound)
             robot.fall()
             puaseGame()
             gameOver()
@@ -428,6 +446,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             let floatsX = floats.position.x - floats.frame.width/2
             let floatsY = floats.position.y + floats.frame.height/2
             if robotX < floatsX  && robotY < floatsY {
+                run(collisionSound)
                 robot.fall()
                 puaseGame()
                 gameOver()
@@ -437,7 +456,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         case coinCategory | floatsCategory:
             let coinNode = contact.bodyA.categoryBitMask == coinCategory ? contact.bodyA.node : contact.bodyB.node
             coinNode?.removeFromParent()
-            print("--hit-- floats + coins")
+//            print("--hit-- floats + coins")
             break
             
         case coinCategory | rockCategory:
@@ -446,7 +465,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             break
             
         default:
-             print("no collision")
+//             print("no collision")
             break
         }
     }
@@ -461,7 +480,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                 self.run(coinWait){self.coinMove=true}
                 if(coinMove){moveCoin()}
                 
-                let rockRandomSec = CGFloat.random(in: 4...5.5)
+                let rockRandomSec = CGFloat.random(in: 5...10.5)
                 let rockWait = SKAction.wait(forDuration: TimeInterval(rockRandomSec))
                 self.run(rockWait){self.rockMove=true}
                 if(rockMove){moveRock()}
@@ -473,19 +492,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
             }
         
             if self.childNode(withName: "coin") == nil{
-                print("no coins")
+//                print("no coins")
                 createCoin()
                 setCoinPhysics()
             }
             
             if self.childNode(withName: "rock") == nil{
-                print("no rock")
+//                print("no rock")
                 createRock()
                 setRockPhysics()
             }
             
             if self.childNode(withName: "floats") == nil{
-                print("no floats")
+//                print("no floats")
                 createFloats()
                 setFloatsPhysics()
             }

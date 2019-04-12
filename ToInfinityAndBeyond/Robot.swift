@@ -118,12 +118,12 @@ public class Robot{
     func jump(){
         let beginJump = SKAction.run{isGrounded = false}
         let jump = SKAction.animate(with: jumpFrames, timePerFrame:0.07, resize: true, restore: true)
-        let up = SKAction.moveBy(x: 0, y: robotSprite.frame.height, duration: 0.02)
-        let jumpGroup = SKAction.group([beginJump,jump,up])
-        let down = SKAction.moveBy(x: 0, y: -robotSprite.frame.height, duration: 0.01)
-        let endJump = SKAction.run{isGrounded = true}
+//        let up = SKAction.moveBy(x: 0, y: robotSprite.frame.height, duration: 0.02)
+//        let jumpGroup = SKAction.group([beginJump,jump,up])
+//        let down = SKAction.moveBy(x: 0, y: -robotSprite.frame.height, duration: 0.01)
+//        let endJump = SKAction.run{isGrounded = true}
 //        robotSprite.run(SKAction.sequence([jumpGroup,down,endJump]), withKey: "Jump")
-        robotSprite.run(SKAction.sequence([beginJump,jump,endJump]), withKey: "Jump")
+        robotSprite.run(SKAction.sequence([beginJump,jump]), withKey: "Jump")
     }
     
     func slide(){
@@ -142,7 +142,7 @@ public class Robot{
     func fall(){
         robotSprite.removeAllActions()
         let fall = SKAction.animate(with: fallFrames, timePerFrame:0.2, resize: true, restore: false)
-        let down = SKAction.run{isDown = true}
+//        let down = SKAction.run{isDown = true}
 //        robotSprite.run(SKAction.sequence([fall,down]))
         robotSprite.run(fall)//{isDown = true}
 //        print("isDown  \(isDown)")
