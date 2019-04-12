@@ -290,7 +290,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         self.run(SKAction.sequence([wait,goGameOver]))
     }
     
-    func puaseGame(){
+    func pauseGame(){
         isGamePaused = true
         BGM.run(SKAction.pause())
         enumerateChildNodes(withName: "gameBg") { (gameBackground, pause) in
@@ -299,7 +299,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     }
     
     func resumeGame(){
-        isGamePaused = false
+        let wait = SKAction.wait(forDuration: 0.5)
+        self.run(wait){self.isGamePaused = false}
+        
         enumerateChildNodes(withName: "gameBg") { (gameBackground, resume) in
             gameBackground.isPaused = false;
         }
@@ -311,7 +313,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         addChild(pauseView.backButton)
         addChild(pauseView.restartButton)
         robot.idle()
-        puaseGame()
+        pauseGame()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -456,20 +458,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
 //            print("--hit rock--")
             run(collisionSound)
             robot.fall()
-            puaseGame()
+            pauseGame()
             gameOver()
             break
             
         case robotCategory | floatsCategory:
             let robotX = robot.robotSprite.position.x
-            let robotY = robot.robotSprite.position.y
+            let robotY = robot.robotSprite.position.y - robot.robotSprite.frame.height/2
             let floatsX = floats.position.x - floats.frame.width/2
-            let floatsY = floats.position.y + floats.frame.height/2
+            let floatsY = floats.position.y - floats.frame.height/1.8
             if robotX < floatsX  && robotY < floatsY {
                 run(collisionSound)
                 robot.fall()
-                puaseGame()
+                pauseGame()
                 gameOver()
+            }else{
+                isGrounded = true
             }
             break
             
@@ -493,6 +497,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     override func update(_ currentTime: TimeInterval) {
         
         if ui.isGameStart {
+            
+            robot.robotSprite.position.x = self.frame.width/4
             
             if !isGamePaused {
                 let coinRandomSec = CGFloat.random(in: 2...3.5)
