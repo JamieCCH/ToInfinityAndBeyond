@@ -118,7 +118,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     
     func createFloats(){
         let numFloat = Int.random(in: 1...maxNumFloat)
-        let randFloatGap = CGFloat.random(in: 550...850)
+        let randFloatGap = CGFloat.random(in: 950...1150)
         for i in 0 ... numFloat{
             floats = SKSpriteNode(imageNamed: "TIAB_float")
             floats.name = "floats"
@@ -389,11 +389,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         
         if ui.isGameStart{
                 if !isGamePaused && isGrounded{
-                    if moveAmtY == 0 && moveAmtY == 0{
+                    
+                    if (moveAmtY == 0 && moveAmtY == 0)  || moveAmtY < 0{
                         robot.jump()
                         robot.robotSprite.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 1100))
                         run(jumpSound)
                     }
+                    
                     var direction = ""
                     if abs(moveAmtX) > minimum_detect_distance {
                         //must be moving side to side
@@ -420,6 +422,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                         run(slideSound)
                         robot.slide()
                     }
+                    
                 }
         }
     }
@@ -497,12 +500,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                 self.run(coinWait){self.coinMove=true}
                 if(coinMove){moveCoin()}
                 
-                let rockRandomSec = CGFloat.random(in: 5...10.5)
+                let rockRandomSec = CGFloat.random(in: 7.5...15.5)
                 let rockWait = SKAction.wait(forDuration: TimeInterval(rockRandomSec))
                 self.run(rockWait){self.rockMove=true}
                 if(rockMove){moveRock()}
                 
-                let floatsRandomSec = CGFloat.random(in: 6.5...7.5)
+                let floatsRandomSec = CGFloat.random(in: 4.5...6.5)
                 let floatsWait = SKAction.wait(forDuration: TimeInterval(floatsRandomSec))
                 self.run(floatsWait){self.floatsMove=true}
                 if(floatsMove){moveFloat()}
