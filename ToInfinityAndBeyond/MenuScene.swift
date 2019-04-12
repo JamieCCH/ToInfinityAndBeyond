@@ -88,16 +88,27 @@ class MenuScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         for t in touches {
             let location = t.location(in: self)
             let touchedNode = atPoint(location)
             if touchedNode.name == "PlayButton" {
-                loadGameScene()
+                let shrink = SKAction.scale(to: 0.25, duration: 0.02)
+                let enlarge = SKAction.scale(to: 0.3, duration: 0.02)
+                touchedNode.run(SKAction.sequence([shrink, enlarge]))
+                let wait = SKAction.wait(forDuration: 0.1)
+                let loadScene = SKAction.run {self.loadGameScene()}
                 run(buttonSound)
+                run(SKAction.sequence([wait,loadScene]))
             }
             if touchedNode.name == "CreditButton" {
-                loadCreditScene()
+                let shrink = SKAction.scale(to: 0.25, duration: 0.02)
+                let enlarge = SKAction.scale(to: 0.3, duration: 0.02)
+                touchedNode.run(SKAction.sequence([shrink, enlarge]))
+                let wait = SKAction.wait(forDuration: 0.1)
+                let loadScene = SKAction.run {self.loadCreditScene()}
                 run(buttonSound)
+                run(SKAction.sequence([wait,loadScene]))
             }
         }
     }

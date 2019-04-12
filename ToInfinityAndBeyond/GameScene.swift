@@ -323,8 +323,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                 let touchedNode = atPoint(location)
                 
                 if touchedNode.name == "PauseButton" {
-                    displayPauseScreen()
+                    let shrink = SKAction.scale(to: 0.45, duration: 0.02)
+                    let enlarge = SKAction.scale(to: 0.5, duration: 0.02)
+                    touchedNode.run(SKAction.sequence([shrink, enlarge]))
+                    let wait = SKAction.wait(forDuration: 0.1)
+                    let loadScene = SKAction.run {self.displayPauseScreen()}
                     run(buttonSound)
+                    run(SKAction.sequence([wait,loadScene]))
                 }
                 if touchedNode == robot.robotSprite{
 //                    loadGameOverScene()
@@ -341,26 +346,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                 }
                 
                 if touchedNode.name == "BackButton"{
-                    pauseView.background.removeFromParent()
-                    pauseView.title.removeFromParent()
-                    pauseView.backButton.removeFromParent()
-                    pauseView.restartButton.removeFromParent()
+                    let shrink = SKAction.scale(to: 0.3, duration: 0.03)
+                    let enlarge = SKAction.scale(to: 0.4, duration: 0.03)
+                    touchedNode.run(SKAction.sequence([shrink, enlarge]))
+                    let wait = SKAction.wait(forDuration: 0.2)
+                    let loadScene = SKAction.run {
+                        self.pauseView.background.removeFromParent()
+                        self.pauseView.title.removeFromParent()
+                        self.pauseView.backButton.removeFromParent()
+                        self.pauseView.restartButton.removeFromParent()
+                    }
                     run(buttonSound)
+                    run(SKAction.sequence([wait,loadScene]))
                     robot.run()
                     resumeGame()
                     BGM.run(SKAction.play())
                 }
                 
                 if touchedNode.name == "RestartButton" {
-                    loadMenuScene()
+                    let shrink = SKAction.scale(to: 0.3, duration: 0.02)
+                    let enlarge = SKAction.scale(to: 0.4, duration: 0.02)
+                    touchedNode.run(SKAction.sequence([shrink, enlarge]))
+                    let wait = SKAction.wait(forDuration: 0.2)
+                    let loadScene = SKAction.run {self.loadMenuScene()}
                     run(buttonSound)
+                    run(SKAction.sequence([wait,loadScene]))
                 }
             }
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+    
         if let touch = touches.first{
             let movingPoint: CGPoint = touch.location(in: self.scene!.view)
             moveAmtX = movingPoint.x - initialTouch.x
